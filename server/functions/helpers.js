@@ -6,6 +6,13 @@ function generateRandomDigits(length) {
   return randomDigits;
 }
 
+function generateUserNumber() {
+  const currentYear = new Date().getFullYear();
+  const randomDigits = generateRandomDigits(6);
+  return `${currentYear}${randomDigits}`;
+}
+
 module.exports = {
   generateRandomDigits,
+  generateUserNumber,
 };
