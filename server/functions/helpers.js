@@ -12,7 +12,14 @@ function generateUserNumber() {
   return `${currentYear}${randomDigits}`;
 }
 
+function generateModuleCode() {
+  const prefix = "AC";
+  const randomDigits = generateRandomDigits(6);
+  return prefix + randomDigits;
+}
+
 module.exports = {
   generateRandomDigits,
   generateUserNumber,
+  generateModuleCode,
 };
