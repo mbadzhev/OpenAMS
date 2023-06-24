@@ -27,6 +27,7 @@ app.use(express.json());
 app.use("/api/users", require("./routes/users"));
 app.use("/api/modules", require("./routes/modules"));
 app.use("/api/events", require("./routes/events"));
+app.use("/api/tokens", require("./routes/tokens"));
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);
