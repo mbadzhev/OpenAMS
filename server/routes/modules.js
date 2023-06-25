@@ -5,13 +5,9 @@ const Module = require("../models/module");
 // Create
 router.post("/", async (req, res) => {
   try {
-    const { name, lecturers, students, events } = req.body;
-    const newModule = new Module({
-      name,
-      lecturers,
-      students,
-      events,
-    });
+    const fields = req.body;
+    const newModule = new Module();
+    Object.assign(newModule, fields);
     await newModule.save();
     res.status(201).json(newModule);
   } catch (error) {
@@ -22,17 +18,10 @@ router.post("/", async (req, res) => {
 // Read
 router.get("/", async (req, res) => {
   try {
-    let query = Module.find();
-    if (query.length > 0 && query.lecturers.length > 0) {
-      query = query.populate({ path: "lecturers" });
-    }
-    if (query.length > 0 && query.students.length > 0) {
-      query = query.populate({ path: "students" });
-    }
-    if (query.length > 0 && query.events.length > 0) {
-      query = query.populate({ path: "events" });
-    }
-    const modules = await query.exec();
+    const modules = await Module.find()
+      .populate("lecturers", "firstName lastName number")
+      .populate("students", "firstName lastName number")
+      .populate("events", "date location eventType attendanceType");
     res.status(200).json(modules);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -49,19 +38,9 @@ router.get("/:moduleId", getModule, (req, res) => {
 
 // Update
 router.patch("/:moduleId", getModule, async (req, res) => {
-  if (req.body.name) {
-    res.module.name = req.body.name;
-  }
-  if (req.body.lecturers) {
-    res.module.lecturers = req.body.lecturers;
-  }
-  if (req.body.students) {
-    res.module.students = req.body.students;
-  }
-  if (req.body.events) {
-    res.module.events = req.body.events;
-  }
   try {
+    const updates = req.body;
+    Object.assign(res.module, updates);
     const updatedModule = await res.module.save();
     res.status(200).json(updatedModule);
   } catch (error) {
@@ -82,17 +61,10 @@ router.delete("/:moduleId", getModule, async (req, res) => {
 // Middleware
 async function getModule(req, res, next) {
   try {
-    let query = Module.findById(req.params.moduleId);
-    if (query.length > 0 && query.lecturers.length > 0) {
-      query = query.populate({ path: "lecturers" });
-    }
-    if (query.length > 0 && query.students.length > 0) {
-      query = query.populate({ path: "students" });
-    }
-    if (query.length > 0 && query.events.length > 0) {
-      query = query.populate({ path: "events" });
-    }
-    const module = await query.exec();
+    const module = await Module.findById(req.params.moduleId)
+      .populate("lecturers", "firstName lastName number")
+      .populate("students", "firstName lastName number")
+      .populate("events", "date location eventType attendanceType");
     if (!module) {
       return res.status(404).json({ error: "Module not found." });
     }
