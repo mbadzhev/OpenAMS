@@ -22,17 +22,10 @@ router.post("/", async (req, res) => {
 // Read
 router.get("/", async (req, res) => {
   try {
-    let query = Module.find();
-    if (query.length > 0 && query.lecturers.length > 0) {
-      query = query.populate({ path: "lecturers" });
-    }
-    if (query.length > 0 && query.students.length > 0) {
-      query = query.populate({ path: "students" });
-    }
-    if (query.length > 0 && query.events.length > 0) {
-      query = query.populate({ path: "events" });
-    }
-    const modules = await query.exec();
+    const modules = await Module.findById(req.params.moduleId)
+      .populate("lecturers", "firstName lastName number")
+      .populate("students", "firstName lastName number")
+      .populate("events", "date location eventType attendanceType");
     res.status(200).json(modules);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -82,17 +75,10 @@ router.delete("/:moduleId", getModule, async (req, res) => {
 // Middleware
 async function getModule(req, res, next) {
   try {
-    let query = Module.findById(req.params.moduleId);
-    if (query.length > 0 && query.lecturers.length > 0) {
-      query = query.populate({ path: "lecturers" });
-    }
-    if (query.length > 0 && query.students.length > 0) {
-      query = query.populate({ path: "students" });
-    }
-    if (query.length > 0 && query.events.length > 0) {
-      query = query.populate({ path: "events" });
-    }
-    const module = await query.exec();
+    const module = await Module.findById(req.params.moduleId)
+      .populate("lecturers", "firstName lastName number")
+      .populate("students", "firstName lastName number")
+      .populate("events", "date location eventType attendanceType");
     if (!module) {
       return res.status(404).json({ error: "Module not found." });
     }
