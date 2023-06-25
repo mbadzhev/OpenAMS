@@ -5,13 +5,9 @@ const Module = require("../models/module");
 // Create
 router.post("/", async (req, res) => {
   try {
-    const { name, lecturers, students, events } = req.body;
-    const newModule = new Module({
-      name,
-      lecturers,
-      students,
-      events,
-    });
+    const fields = req.body;
+    const newModule = new Module();
+    Object.assign(newModule, fields);
     await newModule.save();
     res.status(201).json(newModule);
   } catch (error) {
@@ -22,7 +18,7 @@ router.post("/", async (req, res) => {
 // Read
 router.get("/", async (req, res) => {
   try {
-    const modules = await Module.findById(req.params.moduleId)
+    const modules = await Module.find()
       .populate("lecturers", "firstName lastName number")
       .populate("students", "firstName lastName number")
       .populate("events", "date location eventType attendanceType");
@@ -42,19 +38,9 @@ router.get("/:moduleId", getModule, (req, res) => {
 
 // Update
 router.patch("/:moduleId", getModule, async (req, res) => {
-  if (req.body.name) {
-    res.module.name = req.body.name;
-  }
-  if (req.body.lecturers) {
-    res.module.lecturers = req.body.lecturers;
-  }
-  if (req.body.students) {
-    res.module.students = req.body.students;
-  }
-  if (req.body.events) {
-    res.module.events = req.body.events;
-  }
   try {
+    const updates = req.body;
+    Object.assign(res.module, updates);
     const updatedModule = await res.module.save();
     res.status(200).json(updatedModule);
   } catch (error) {
