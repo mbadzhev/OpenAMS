@@ -42,4 +42,26 @@ const userSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+// Remove object from referenced documents
+userSchema.pre("deleteOne", { document: true }, async function (next) {
+  try {
+    await this.model("Module").updateMany(
+      { _id: this.modules },
+      { $pull: { students: this._id } }
+    );
+    await this.model("Module").updateMany(
+      { _id: this.modules },
+      { $pull: { lecturers: this._id } }
+    );
+    await this.model("Event").updateMany(
+      { _id: this.events },
+      { $pull: { attendance: { student: this._id } } }
+    );
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = mongoose.model("User", userSchema);

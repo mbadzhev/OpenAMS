@@ -51,4 +51,26 @@ const eventSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Remove object from referenced documents
+eventSchema.pre("deleteOne", { document: true }, async function (next) {
+  try {
+    await this.model("Module").updateOne(
+      { _id: this.module },
+      { $pull: { events: this._id } }
+    );
+    await this.model("User").updateMany(
+      { _id: this.attendance.student },
+      { $pull: { events: this._id } }
+    );
+    await this.model("Token").updateMany(
+      { _id: this.tokens },
+      { $unset: { event: this._id } }
+    );
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = mongoose.model("Event", eventSchema);

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { generateRandomDigits } = require("../functions/helpers");
+const Event = require("./event");
 
 const tokenSchema = new mongoose.Schema(
   {
@@ -21,5 +22,19 @@ const tokenSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Remove object from referenced documents
+tokenSchema.pre("deleteOne", { document: true }, async function (next) {
+  try {
+    await this.model("Event").updateOne(
+      { _id: this.event },
+      { $pull: { tokens: this._id } }
+    );
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = mongoose.model("Token", tokenSchema);

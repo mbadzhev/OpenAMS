@@ -50,4 +50,26 @@ moduleSchema.pre("save", function (next) {
     });
 });
 
+// Remove object from referenced documents
+moduleSchema.pre("deleteOne", { document: true }, async function (next) {
+  try {
+    await this.model("Event").updateMany(
+      { _id: this.events },
+      { $unset: { module: this._id } }
+    );
+    await this.model("User").updateMany(
+      { _id: this.students },
+      { $pull: { modules: this._id } }
+    );
+    await this.model("User").updateMany(
+      { _id: this.lecturers },
+      { $pull: { modules: this._id } }
+    );
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = mongoose.model("Module", moduleSchema);
