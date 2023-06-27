@@ -42,6 +42,41 @@ const userSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.pre("save", { document: true }, async function (next) {
+  try {
+    const Module = mongoose.model("Module");
+    const Event = mongoose.model("Event");
+    const moduleIds = this.modules || [];
+    const eventIds = this.events || [];
+
+    // Update users in the associated modules
+    await Module.updateMany(
+      { _id: { $in: moduleIds } },
+      { $addToSet: { students: this._id } }
+    );
+    // Remove users from modules they are no longer associated with
+    await Module.updateMany(
+      { _id: { $nin: moduleIds } },
+      { $pull: { students: this._id } }
+    );
+
+    // Update users in the associated events
+    await Event.updateMany(
+      { _id: { $in: eventIds } },
+      { $addToSet: { attendance: { student: this._id } } }
+    );
+    // Remove users from events they are no longer associated with
+    await Event.updateMany(
+      { _id: { $nin: eventIds } },
+      { $pull: { attendance: { student: this._id } } }
+    );
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Remove object from referenced documents
 userSchema.pre("deleteOne", { document: true }, async function (next) {
   try {
