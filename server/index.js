@@ -19,7 +19,11 @@ mongoose.connection.on("error", (error) => {
   console.error(`Error connecting to database.\n`, error);
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URI,
+  })
+);
 
 app.use(express.json());
 
