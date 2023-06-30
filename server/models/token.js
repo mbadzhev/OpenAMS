@@ -6,7 +6,9 @@ const tokenSchema = new mongoose.Schema(
     code: {
       type: Number,
       required: true,
-      default: generateRandomDigits(6),
+      default: function () {
+        return generateRandomDigits(6);
+      },
     },
     event: {
       type: mongoose.Schema.Types.ObjectId,
