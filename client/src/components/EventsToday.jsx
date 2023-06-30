@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import fetchUser from "../functions/fetchUser";
 
+import AttendanceStatus from "./AttendanceStatus";
+import CheckinButton from "./CheckinButton";
+
 const EventsToday = ({ userId }) => {
   const [getData, setData] = useState(null);
   const [getLoading, setGetLoading] = useState(true);
@@ -82,6 +85,11 @@ const EventsToday = ({ userId }) => {
               minute: "2-digit",
             })}
           </h2>
+          {status ? (
+            <AttendanceStatus />
+          ) : (
+            <CheckinButton eventId={event._id} userId={userId} />
+          )}
         </li>
       );
     });
