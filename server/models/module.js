@@ -10,7 +10,9 @@ const moduleSchema = mongoose.Schema(
     code: {
       type: String,
       unique: true,
-      default: generateModuleCode,
+      default: function () {
+        return generateModuleCode();
+      },
     },
     lecturers: [
       {

@@ -14,7 +14,9 @@ const userSchema = mongoose.Schema(
     number: {
       type: Number,
       unique: true,
-      default: generateUserNumber,
+      default: function () {
+        return generateUserNumber();
+      },
     },
     role: {
       type: String,
