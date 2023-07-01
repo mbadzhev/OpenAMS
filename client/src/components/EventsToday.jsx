@@ -1,42 +1,21 @@
 import React, { useState, useEffect } from "react";
-import fetchUser from "../functions/fetchUser";
 
+// Components
 import AttendanceStatus from "./AttendanceStatus";
 import CheckinButton from "./CheckinButton";
 
-const EventsToday = ({ userId }) => {
-  const [getData, setData] = useState(null);
-  const [getLoading, setGetLoading] = useState(true);
-  const [getError, setError] = useState(null);
+const EventsToday = ({ userObj, userId }) => {
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const responseData = await fetchUser(userId);
-        setData(responseData);
-        setError(null);
-      } catch (error) {
-        setError(error.message);
-        setData(null);
-      } finally {
-        setGetLoading(false);
-      }
-    };
+    setUserData(userObj);
+  }, [userObj]);
 
-    fetchData();
-  }, []);
-
-  if (getLoading) {
-    return <h1>Loading...</h1>;
+  if (!userData) {
+    return <h2>Loading data...</h2>;
   }
 
-  if (getError) {
-    return (
-      <h1>{`There is a problem fetching the requested data - ${getError}`}</h1>
-    );
-  }
-
-  const todayEvents = getData.events.filter((obj) => {
+  const todayEvents = userData.events.filter((obj) => {
     const eventDate = new Date(obj.date);
     eventDate.setHours(0, 0, 0, 0);
     const currentDate = new Date();
@@ -60,7 +39,7 @@ const EventsToday = ({ userId }) => {
   function EventList() {
     const listItems = todayEvents.map((event) => {
       let moduleName, moduleCode, status;
-      getData.modules.some((module) => {
+      userData.modules.some((module) => {
         if (module._id === event.module) {
           moduleName = module.name;
           moduleCode = module.code;
