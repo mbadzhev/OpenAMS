@@ -16,13 +16,7 @@ function CheckinButton({ eventId, userId }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Perform any necessary actions with the submitted value
-    console.log(eventId);
-    console.log(userId);
     patchEventStudentCheckin(eventId, userId, checkinCode);
-    setCheckinCode("");
-
-    // Close the popup
     setIsOpen(false);
   };
 

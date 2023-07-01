@@ -1,21 +1,22 @@
-async function patchEventStudentCheckin(eventId, userId, code) {
-  console.log(eventId);
-  console.log(userId);
-  console.log(code);
-  try {
-    const url = `/api/events/${eventId}/${userId}/${code}`;
-    const response = await fetch(url, {
-      method: "PATCH",
+function patchEventStudentCheckin(eventId, userId, code) {
+  const url = `/api/events/${eventId}/${userId}/${code}`;
+  fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to update data");
+      }
+      return response.json();
+    })
+    .then((responseData) => {})
+    .catch((error) => {
+      console.error(error);
     });
-    if (!response.ok) {
-      throw new Error(
-        `This is an HTTP error: The status is ${response.status}`
-      );
-    }
-    return response.status;
-  } catch (error) {
-    throw new Error(`There is a problem patching the data - ${error}`);
-  }
 }
 
 export default patchEventStudentCheckin;
