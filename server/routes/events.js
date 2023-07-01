@@ -49,6 +49,37 @@ router.patch("/:eventId", getEvent, async (req, res) => {
   }
 });
 
+// Update student attendance
+router.patch("/:eventId/:userId/:code", getEvent, async (req, res) => {
+  try {
+    const studentNumber = req.params.userId;
+    const tokenCode = req.params.code;
+    const studentIndex = res.event.attendance.findIndex(
+      (item) => item && item.student._id == studentNumber
+    );
+    const studentPresent = res.event.attendance[studentIndex].present;
+
+    if (studentPresent) {
+      return res.status(304).json({ message: "Already checked in." });
+    } else {
+      let codeCorrect = false;
+      res.event.tokens.forEach((token) => {
+        if (token.code == tokenCode && token.expiredAt >= new Date()) {
+          codeCorrect = true;
+          res.event.attendance[studentIndex].present = true;
+        }
+      });
+      if (codeCorrect == false) {
+        return res.status(400).json({ error: "Code invalid." });
+      }
+    }
+    const eventUpdate = await res.event.save();
+    res.status(200).json(eventUpdate);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Delete
 router.delete("/:eventId", getEvent, async (req, res) => {
   try {
@@ -64,7 +95,8 @@ async function getEvent(req, res, next) {
   try {
     const event = await Event.findById(req.params.eventId)
       .populate("module", "name code")
-      .populate("attendance.student", "firstName lastName number");
+      .populate("attendance.student", "firstName lastName number")
+      .populate("tokens", "code expiredAt");
 
     if (!event) {
       return res.status(404).json({ error: "Event not found." });

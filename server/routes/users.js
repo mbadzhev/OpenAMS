@@ -61,8 +61,20 @@ router.delete("/:userId", getUser, async (req, res) => {
 async function getUser(req, res, next) {
   try {
     const user = await User.findById(req.params.userId)
-      .populate("modules", "name code")
-      .populate("events", "module date location eventType attendanceType");
+      .populate({
+        path: "modules",
+        select: "name code",
+      })
+      .populate({
+        path: "events",
+        select: "module date location eventType attendanceType",
+        populate: {
+          path: "attendance",
+          // Only populate attendance for the given user ID
+          match: { student: req.params.userId },
+          select: "student present",
+        },
+      });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
