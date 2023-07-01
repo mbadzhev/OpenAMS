@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+// Functions
 import patchEventStudentCheckin from "../functions/patchEventStudentCheckin";
 
 function CheckinButton({ eventId, userId }) {
@@ -14,9 +15,9 @@ function CheckinButton({ eventId, userId }) {
     setCheckinCode(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    patchEventStudentCheckin(eventId, userId, checkinCode);
+    await patchEventStudentCheckin(eventId, userId, checkinCode);
     setIsOpen(false);
   };
 
