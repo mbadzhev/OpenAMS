@@ -28,6 +28,12 @@ const eventSchema = new mongoose.Schema(
       enum: ["optional", "mandatory"],
       required: true,
     },
+    lecturers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     attendance: [
       {
         student: {
@@ -57,6 +63,7 @@ eventSchema.pre("save", { document: true }, async function (next) {
     const User = mongoose.model("User");
     const Token = mongoose.model("Token");
     const moduleIds = this.module || [];
+    const lecturerIds = this.lecturers || [];
     const studentIds =
       this.attendance.map((attendance) => attendance.student) || [];
     const tokenIds = this.tokens || [];
@@ -74,12 +81,12 @@ eventSchema.pre("save", { document: true }, async function (next) {
 
     // Update users in associated events
     await User.updateMany(
-      { _id: { $in: studentIds } },
+      { _id: { $in: [...studentIds, ...lecturerIds] } },
       { $addToSet: { events: this._id } }
     );
     // Remove events from users they are no longer associated with
     await User.updateMany(
-      { _id: { $nin: studentIds } },
+      { _id: { $nin: [...studentIds, ...lecturerIds] } },
       { $pull: { events: this._id } }
     );
 
@@ -109,6 +116,10 @@ eventSchema.pre("deleteOne", { document: true }, async function (next) {
     );
     await this.model("User").updateMany(
       { _id: this.attendance.student },
+      { $pull: { events: this._id } }
+    );
+    await this.model("User").updateMany(
+      { _id: this.lecturers },
       { $pull: { events: this._id } }
     );
     await this.model("Token").updateMany(
