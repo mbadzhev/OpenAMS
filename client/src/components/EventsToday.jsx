@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 
 // Components
-import AttendanceStatus from "./AttendanceStatus";
-import CheckinButton from "./CheckinButton";
+import LecturerEventList from "./LecturerEventList";
+import StudentEventList from "./StudentEventList";
 
-const EventsToday = ({ userObj, userId }) => {
-  const [userData, setUserData] = useState(null);
+// Contexts
+import UserContext from "../contexts/UserContext";
 
-  useEffect(() => {
-    setUserData(userObj);
-  }, [userObj]);
+function EventsToday() {
+  const userData = useContext(UserContext);
 
   if (!userData) {
     return <h2>Loading data...</h2>;
@@ -34,54 +33,21 @@ const EventsToday = ({ userObj, userId }) => {
         No events today.
       </>
     );
+  } else if (userData && userData.role === "lecturer") {
+    return (
+      <LecturerEventList todayEvents={todayEvents} modules={userData.modules} />
+    );
+  } else if (userData && userData.role === "student") {
+    return (
+      <StudentEventList
+        todayEvents={todayEvents}
+        modules={userData.modules}
+        userId={userData._id}
+      />
+    );
+  } else {
+    return <div>Render Alternative Component</div>;
   }
-
-  function EventList() {
-    const listItems = todayEvents.map((event) => {
-      let moduleName, moduleCode, status;
-      userData.modules.some((module) => {
-        if (module._id === event.module) {
-          moduleName = module.name;
-          moduleCode = module.code;
-        }
-      });
-      event.attendance.map((attendance) => {
-        status = attendance.present;
-      });
-
-      return (
-        <li key={event._id}>
-          <h2>
-            {moduleName} ({moduleCode})
-          </h2>
-          <h2>Event Type: {event.eventType}</h2>
-          <h2>Attendance Type: {event.attendanceType}</h2>
-          {event.eventType !== "online" && <h2>Location: {event.location}</h2>}
-          <h2>
-            Time:{" "}
-            {new Date(event.date).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </h2>
-          {status ? (
-            <AttendanceStatus />
-          ) : (
-            <CheckinButton eventId={event._id} userId={userId} />
-          )}
-        </li>
-      );
-    });
-
-    return <ul>{listItems}</ul>;
-  }
-
-  return (
-    <>
-      <h2>Events Today</h2>
-      <EventList />
-    </>
-  );
-};
+}
 
 export default EventsToday;
