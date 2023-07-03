@@ -1,46 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 // Components
 import EventsToday from "../components/EventsToday";
 import { Doughnut } from "react-chartjs-2";
 
+// Contexts
+import UserContext from "../contexts/UserContext";
+
 // Functions
 import aggregateAttendanceData from "../functions/aggregateAttendanceData";
-import fetchUser from "../functions/fetchUser";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 function StudentDashboard() {
-  const [userData, setUserData] = useState(null);
+  const userData = useContext(UserContext);
   const [userChartData, setUserChartData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // temp
-  const userId = "649afa6a58545270f6928cb7";
+  if (!userData) {
+    return <h2>Loading data...</h2>;
+  }
 
-  useEffect(() => {
-    fetchData(userId);
-  }, []);
   useEffect(() => {
     if (userData) {
       getAttendanceStatistics(userData);
     }
   }, [userData]);
 
-  async function fetchData(userId) {
-    try {
-      const response = await fetchUser(userId);
-      setUserData(response);
-      setError(null);
-    } catch (error) {
-      setError(error.message);
-      setUserData(null);
-    } finally {
-      setLoading(false);
-    }
-  }
   async function getAttendanceStatistics(userData) {
     try {
       const stats = await aggregateAttendanceData(userData);
@@ -55,17 +43,17 @@ function StudentDashboard() {
   }
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <h2>Loading...</h2>;
   }
   if (error) {
     return (
-      <h1>{`There is a problem fetching the requested data - ${error}`}</h1>
+      <h2>{`There is a problem fetching the requested data - ${error}`}</h2>
     );
   }
 
   return (
     <>
-      {userData && <EventsToday userObj={userData} userId={userId} />}
+      {userData && <EventsToday />}
       {userChartData && <Doughnut data={userChartData} />}
     </>
   );

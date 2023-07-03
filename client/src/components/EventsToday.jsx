@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 
 // Components
 import LecturerEventList from "./LecturerEventList";
 import StudentEventList from "./StudentEventList";
 
-const EventsToday = ({ userObj, userId }) => {
-  const [userData, setUserData] = useState(null);
+// Contexts
+import UserContext from "../contexts/UserContext";
 
-  useEffect(() => {
-    setUserData(userObj);
-  }, [userObj]);
+function EventsToday() {
+  const userData = useContext(UserContext);
 
   if (!userData) {
     return <h2>Loading data...</h2>;
@@ -43,12 +42,12 @@ const EventsToday = ({ userObj, userId }) => {
       <StudentEventList
         todayEvents={todayEvents}
         modules={userData.modules}
-        userId={userId}
+        userId={userData._id}
       />
     );
   } else {
     return <div>Render Alternative Component</div>;
   }
-};
+}
 
 export default EventsToday;
