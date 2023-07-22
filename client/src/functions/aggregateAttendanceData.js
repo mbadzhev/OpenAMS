@@ -9,11 +9,13 @@ async function aggregateAttendanceData(userData) {
   try {
     userData.events.forEach((event) => {
       event.attendance.forEach((attendance) => {
-        eventsTotal++;
-        if (attendance.present) {
-          eventsPresent++;
-        } else {
-          eventsAbsent++;
+        if (attendance.student == userData._id) {
+          eventsTotal++;
+          if (attendance.present) {
+            eventsPresent++;
+          } else {
+            eventsAbsent++;
+          }
         }
       });
     });
