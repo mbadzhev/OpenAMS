@@ -1,8 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 // Components
-import EventsToday from "../components/EventsToday";
 import EventList from "../components/EventList";
 import { Doughnut } from "react-chartjs-2";
 
@@ -17,6 +15,7 @@ function StudentAttendance() {
   const [userChartData, setUserChartData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedModule, setSelectedModule] = useState(null);
 
   if (!userData) {
     return <h2>Loading data...</h2>;
@@ -24,13 +23,13 @@ function StudentAttendance() {
 
   useEffect(() => {
     if (userData) {
-      getAttendanceStatistics(userData);
+      getAttendanceStatistics(userData, selectedModule);
     }
-  }, [userData]);
+  }, [userData, selectedModule]);
 
-  async function getAttendanceStatistics(userData) {
+  async function getAttendanceStatistics(userData, selectedModule) {
     try {
-      const stats = await aggregateAttendanceData(userData);
+      const stats = await aggregateAttendanceData(userData, selectedModule);
       setUserChartData(stats);
       setError(null);
     } catch (error) {
@@ -39,6 +38,10 @@ function StudentAttendance() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleModuleSelect(moduleId) {
+    setSelectedModule(moduleId);
   }
 
   if (loading) {
@@ -52,9 +55,24 @@ function StudentAttendance() {
 
   return (
     <>
-      {userData && <EventList user={userData._id} />}
+      <div>
+        <button onClick={() => handleModuleSelect(null)}>
+          Show All Modules
+        </button>
+        {userData &&
+          userData.modules.map((module) => (
+            <button
+              key={module._id}
+              onClick={() => handleModuleSelect(module._id)}
+            >
+              {module.name}
+            </button>
+          ))}
+      </div>
+      <EventList user={userData._id} selectedModule={selectedModule} />
       {userChartData && <Doughnut data={userChartData} />}
     </>
   );
 }
+
 export default StudentAttendance;

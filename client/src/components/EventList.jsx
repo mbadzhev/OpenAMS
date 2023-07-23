@@ -1,10 +1,7 @@
-import React from "react";
 import { useState, useEffect } from "react";
-
-// Functions
 import fetchUser from "../functions/fetchUser";
 
-function EventList({ user }) {
+function EventList({ user, selectedModule }) {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -33,7 +30,15 @@ function EventList({ user }) {
 
   function getFormattedEventData() {
     if (!userData) return [];
-    const filteredEvents = userData.events.map((event) => {
+    let filteredEvents = userData.events;
+
+    if (selectedModule) {
+      filteredEvents = filteredEvents.filter(
+        (event) => event.module === selectedModule
+      );
+    }
+
+    return filteredEvents.map((event) => {
       const { _id, date, attendance, module, eventType, attendanceType } =
         event;
       const moduleInfo = getModuleInfo(module);
@@ -61,8 +66,6 @@ function EventList({ user }) {
         studentAttendance,
       };
     });
-
-    return filteredEvents;
   }
 
   const formattedEventData = getFormattedEventData();
