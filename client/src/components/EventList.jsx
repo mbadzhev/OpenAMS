@@ -1,29 +1,4 @@
-import { useState, useEffect } from "react";
-import fetchUser from "../functions/fetchUser";
-
-function EventList({ user, selectedModule }) {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    getUserData(user);
-  }, [user]);
-
-  async function getUserData(user) {
-    try {
-      setLoading(true);
-      const data = await fetchUser(user);
-      setUserData(data);
-      setError(null);
-    } catch (error) {
-      setError(error.message);
-      setUserData(null);
-    } finally {
-      setLoading(false);
-    }
-  }
-
+function EventList({ userData, selectedModule }) {
   function getModuleInfo(moduleId) {
     return userData.modules.find((module) => module._id === moduleId);
   }
@@ -45,7 +20,7 @@ function EventList({ user, selectedModule }) {
       const moduleName = moduleInfo ? moduleInfo.name : "Unknown Module";
       const moduleCode = moduleInfo ? moduleInfo.code : "Unknown Code";
       const currentUserAttendance = attendance.find(
-        (item) => item.student === user
+        (item) => item.student === userData._id
       );
       const studentAttendance = currentUserAttendance
         ? [
@@ -69,15 +44,6 @@ function EventList({ user, selectedModule }) {
   }
 
   const formattedEventData = getFormattedEventData();
-
-  if (loading) {
-    return <h2>Loading...</h2>;
-  }
-  if (error) {
-    return (
-      <h2>{`There is a problem fetching the requested data - ${error}`}</h2>
-    );
-  }
 
   return (
     <div>

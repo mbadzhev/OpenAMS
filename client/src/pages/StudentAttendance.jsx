@@ -1,40 +1,57 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 // Components
 import EventList from "../components/EventList";
 import { Doughnut } from "react-chartjs-2";
 
-// Contexts
-import UserContext from "../contexts/UserContext";
-
 // Functions
+import fetchUser from "../functions/fetchUser";
 import aggregateAttendanceData from "../functions/aggregateAttendanceData";
 
 function StudentAttendance() {
-  const userData = useContext(UserContext);
-  const [userChartData, setUserChartData] = useState(null);
+  const { studentId } = useParams();
+  const [studentData, setStudentData] = useState(null);
+  const [studentChartData, setStudentChartData] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
 
-  if (!userData) {
-    return <h2>Loading data...</h2>;
-  }
+  useEffect(() => {
+    if (studentId) {
+      getStudentData(studentId);
+    }
+  }, [studentId]);
 
   useEffect(() => {
-    if (userData) {
-      getAttendanceStatistics(userData, selectedModule);
+    if (studentData) {
+      getAttendanceStatistics(studentData, selectedModule);
     }
-  }, [userData, selectedModule]);
+  }, [studentData, selectedModule]);
+
+  async function getStudentData(studentId) {
+    try {
+      setLoading(true);
+      const data = await fetchUser(studentId);
+      setStudentData(data);
+      setError(null);
+    } catch (error) {
+      setError(error.message);
+      setStudentData(null);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function getAttendanceStatistics(userData, selectedModule) {
     try {
       const stats = await aggregateAttendanceData(userData, selectedModule);
-      setUserChartData(stats);
+      setStudentChartData(stats);
       setError(null);
     } catch (error) {
       setError(error.message);
-      setUserChartData(null);
+      setStudentChartData(null);
     } finally {
       setLoading(false);
     }
@@ -59,8 +76,8 @@ function StudentAttendance() {
         <button onClick={() => handleModuleSelect(null)}>
           Show All Modules
         </button>
-        {userData &&
-          userData.modules.map((module) => (
+        {studentData &&
+          studentData.modules.map((module) => (
             <button
               key={module._id}
               onClick={() => handleModuleSelect(module._id)}
@@ -69,8 +86,11 @@ function StudentAttendance() {
             </button>
           ))}
       </div>
-      <EventList user={userData._id} selectedModule={selectedModule} />
-      {userChartData && <Doughnut data={userChartData} />}
+
+      {studentData && (
+        <EventList userData={studentData} selectedModule={selectedModule} />
+      )}
+      {studentChartData && <Doughnut data={studentChartData} />}
     </>
   );
 }
