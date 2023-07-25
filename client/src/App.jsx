@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 
 // Components
+import Navbar from "./components/Navbar";
+import NotFound from "./pages/NotFound";
 import StudentDashboard from "./pages/StudentDashboard";
 import LecturerDashboard from "./pages/LecturerDashboard";
+import StudentList from "./pages/StudentList";
+import StudentAttendance from "./pages/StudentAttendance";
 
 // Contexts
 import UserContext from "./contexts/UserContext";
@@ -45,21 +50,39 @@ function App() {
     );
   }
 
-  if (userData && userData.role === "lecturer") {
-    return (
+  return (
+    <>
       <UserContext.Provider value={userData}>
-        <LecturerDashboard />
+        <Navbar />
+        <Routes>
+          {userData && userData.role === "lecturer" && (
+            <>
+              <Route path="/" element={<LecturerDashboard />} />
+              <Route path="/module" element={<h1>ModuleList</h1>} />
+              <Route path="/module/:moduleId" element={<h1>Module</h1>} />
+              <Route path="/event" element={<h1>EventList</h1>} />
+              <Route path="/event/:eventid" element={<h1>Event</h1>} />
+              <Route path="/student" element={<StudentList />} />
+              <Route
+                path="/student/:studentId"
+                element={<StudentAttendance />}
+              />
+            </>
+          )}
+          {userData && userData.role === "student" && (
+            <>
+              <Route path="/" element={<StudentDashboard />} />
+              <Route
+                path="/student/:studentId"
+                element={<StudentAttendance />}
+              />
+            </>
+          )}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </UserContext.Provider>
-    );
-  } else if (userData && userData.role === "student") {
-    return (
-      <UserContext.Provider value={userData}>
-        <StudentDashboard />
-      </UserContext.Provider>
-    );
-  } else {
-    return <div>Render Alternative Component</div>;
-  }
+    </>
+  );
 }
 
 export default App;
