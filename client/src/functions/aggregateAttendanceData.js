@@ -1,21 +1,23 @@
-import fetchUser from "./fetchUser";
-
-// Aggregates data for all events linked to a user
-async function aggregateAttendanceData(userData) {
+// Aggregates data for events linked to a user and a selected module (if provided)
+async function aggregateAttendanceData(userData, selectedModule = null) {
   let eventsTotal = 0,
     eventsPresent = 0,
     eventsAbsent = 0;
 
   try {
     userData.events.forEach((event) => {
-      event.attendance.forEach((attendance) => {
-        eventsTotal++;
-        if (attendance.present) {
-          eventsPresent++;
-        } else {
-          eventsAbsent++;
-        }
-      });
+      if (!selectedModule || event.module === selectedModule) {
+        event.attendance.forEach((attendance) => {
+          if (attendance.student === userData._id) {
+            eventsTotal++;
+            if (attendance.present) {
+              eventsPresent++;
+            } else {
+              eventsAbsent++;
+            }
+          }
+        });
+      }
     });
 
     const chartData = {
@@ -36,4 +38,5 @@ async function aggregateAttendanceData(userData) {
     console.error(error);
   }
 }
+
 export default aggregateAttendanceData;
