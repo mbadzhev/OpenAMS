@@ -82,7 +82,7 @@ function StudentAttendance() {
               key={module._id}
               onClick={() => handleModuleSelect(module._id)}
             >
-              {module.name}
+              {module.code}
             </button>
           ))}
       </div>
