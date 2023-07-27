@@ -8,6 +8,8 @@ import StudentDashboard from "./pages/StudentDashboard";
 import LecturerDashboard from "./pages/LecturerDashboard";
 import StudentList from "./pages/StudentList";
 import StudentAttendance from "./pages/StudentAttendance";
+import EventList from "./pages/EventList";
+import EventAttendance from "./pages/EventAttendance";
 
 // Contexts
 import UserContext from "./contexts/UserContext";
@@ -21,8 +23,8 @@ function App() {
   const [error, setError] = useState(null);
 
   // temps
-  // const userId = "649abe098f09a4b95794d6af";
-  const userId = "649afa6a58545270f6928cb7";
+  const userId = "649abe098f09a4b95794d6af";
+  // const userId = "649afa6a58545270f6928cb7";
 
   useEffect(() => {
     fetchData(userId);
@@ -60,8 +62,8 @@ function App() {
               <Route path="/" element={<LecturerDashboard />} />
               <Route path="/module" element={<h1>ModuleList</h1>} />
               <Route path="/module/:moduleId" element={<h1>Module</h1>} />
-              <Route path="/event" element={<h1>EventList</h1>} />
-              <Route path="/event/:eventid" element={<h1>Event</h1>} />
+              <Route path="/event" element={<EventList />} />
+              <Route path="/event/:eventId" element={<EventAttendance />} />
               <Route path="/student" element={<StudentList />} />
               <Route
                 path="/student/:studentId"
