@@ -49,7 +49,38 @@ router.patch("/:eventId", getEvent, async (req, res) => {
   }
 });
 
-// Update student attendance
+// Update student attendance - lecturer
+router.patch("/:eventId/:userId", getEvent, async (req, res) => {
+  try {
+    const studentNumber = req.params.userId;
+    const studentIndex = res.event.attendance.findIndex(
+      (item) => item && item.student._id == studentNumber
+    );
+
+    if (studentIndex === -1) {
+      return res
+        .status(404)
+        .json({ error: "Student not found in attendance." });
+    }
+
+    const studentPresent = res.event.attendance[studentIndex].present;
+
+    if (studentPresent) {
+      // Mark student as absent
+      res.event.attendance[studentIndex].present = false;
+    } else {
+      // Mark student as present
+      res.event.attendance[studentIndex].present = true;
+    }
+
+    const eventUpdate = await res.event.save();
+    res.status(200).json(eventUpdate);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Update student attendance - student
 router.patch("/:eventId/:userId/:code", getEvent, async (req, res) => {
   try {
     const studentNumber = req.params.userId;
