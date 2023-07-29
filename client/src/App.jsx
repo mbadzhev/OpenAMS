@@ -10,6 +10,8 @@ import StudentList from "./pages/StudentList";
 import StudentAttendance from "./pages/StudentAttendance";
 import EventList from "./pages/EventList";
 import EventAttendance from "./pages/EventAttendance";
+import ModuleList from "./pages/ModuleList";
+import ModuleAttendance from "./pages/ModuleAttendance";
 
 // Contexts
 import UserContext from "./contexts/UserContext";
@@ -60,8 +62,8 @@ function App() {
           {userData && userData.role === "lecturer" && (
             <>
               <Route path="/" element={<LecturerDashboard />} />
-              <Route path="/module" element={<h1>ModuleList</h1>} />
-              <Route path="/module/:moduleId" element={<h1>Module</h1>} />
+              <Route path="/module" element={<ModuleList />} />
+              <Route path="/module/:moduleId" element={<ModuleAttendance />} />
               <Route path="/event" element={<EventList />} />
               <Route path="/event/:eventId" element={<EventAttendance />} />
               <Route path="/student" element={<StudentList />} />
