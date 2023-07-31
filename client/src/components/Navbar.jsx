@@ -1,11 +1,24 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
 
 // Contexts
 import UserContext from "../contexts/UserContext";
 
 function Navbar() {
   const userData = useContext(UserContext);
+  const auth = getAuth();
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("User signed out successfully.");
+      })
+      .catch((error) => {
+        console.error("Error signing out:", error);
+      });
+  };
+
   return (
     <nav>
       <ul>
@@ -29,6 +42,11 @@ function Navbar() {
               <Link to="/student">Students</Link>
             </li>
           </>
+        )}
+        {userData && (
+          <li>
+            <button onClick={handleSignOut}>Sign Out</button>
+          </li>
         )}
       </ul>
     </nav>
