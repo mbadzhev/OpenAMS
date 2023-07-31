@@ -1,4 +1,4 @@
-async function fetchUser(userId = "") {
+async function fetchUserById(userId = "") {
   try {
     const url = userId ? `/api/users/${userId}` : "/api/users";
     const response = await fetch(url);
@@ -16,4 +16,4 @@ async function fetchUser(userId = "") {
   }
 }
 
-export default fetchUser;
+export default fetchUserById;

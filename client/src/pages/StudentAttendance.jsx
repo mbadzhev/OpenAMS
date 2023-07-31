@@ -6,7 +6,7 @@ import EventList from "../components/EventList";
 import { Doughnut } from "react-chartjs-2";
 
 // Functions
-import fetchUser from "../functions/fetchUser";
+import fetchUserById from "../functions/fetchUserById";
 import aggregateAttendanceData from "../functions/aggregateAttendanceData";
 
 function StudentAttendance() {
@@ -33,7 +33,7 @@ function StudentAttendance() {
   async function getStudentData(studentId) {
     try {
       setLoading(true);
-      const data = await fetchUser(studentId);
+      const data = await fetchUserById(studentId);
       setStudentData(data);
       setError(null);
     } catch (error) {
