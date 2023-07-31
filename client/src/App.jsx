@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 // Components
 import Navbar from "./components/Navbar";
@@ -12,52 +14,76 @@ import EventList from "./pages/EventList";
 import EventAttendance from "./pages/EventAttendance";
 import ModuleList from "./pages/ModuleList";
 import ModuleAttendance from "./pages/ModuleAttendance";
+import Login from "./pages/Login";
 
 // Contexts
 import UserContext from "./contexts/UserContext";
 
 // Functions
-import fetchUser from "./functions/fetchUser";
+import fetchUserById from "./functions/fetchUserById";
+import fetchUserByEmail from "./functions/fetchUserByEmail";
 
 function App() {
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // temps
-  const userId = "649abe098f09a4b95794d6af";
-  // const userId = "649afa6a58545270f6928cb7";
+  const navigate = useNavigate();
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCGGXwQo16S2qsVD8gxVuvkmZ2gvfYVy2k",
+    authDomain: "msc-project-a179a.firebaseapp.com",
+    projectId: "msc-project-a179a",
+    storageBucket: "msc-project-a179a.appspot.com",
+    messagingSenderId: "110772079314",
+    appId: "1:110772079314:web:a3e1ad530986aeb53cbb0b",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
 
   useEffect(() => {
-    fetchData(userId);
-  }, []);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setLoading(false);
+      if (user) {
+        let userEmail;
+        user.providerData.forEach((profile) => {
+          userEmail = profile.email;
+        });
+        fetchData(userEmail);
+        navigate(`/`);
+      } else {
+        navigate(`/login`);
+      }
+    });
 
-  async function fetchData(userId) {
+    return unsubscribe;
+  }, [auth]);
+
+  async function fetchData(userEmail) {
     try {
-      const response = await fetchUser(userId);
+      const user = await fetchUserByEmail(userEmail);
+      const response = await fetchUserById(user._id);
       setUserData(response);
       setError(null);
     } catch (error) {
       setError(error.message);
       setUserData(null);
-    } finally {
-      setLoading(false);
     }
   }
 
   if (loading) {
     return <h1>Loading...</h1>;
   }
+
   if (error) {
-    return (
-      <h1>{`There is a problem fetching the requested data - ${error}`}</h1>
-    );
+    return <h1>{`Error: ${error}`}</h1>;
   }
 
   return (
     <>
       <UserContext.Provider value={userData}>
-        <Navbar />
+        {userData && <Navbar />}
         <Routes>
           {userData && userData.role === "lecturer" && (
             <>
@@ -82,6 +108,7 @@ function App() {
               />
             </>
           )}
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </UserContext.Provider>
