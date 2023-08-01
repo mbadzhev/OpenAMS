@@ -24,6 +24,7 @@ import fetchUserById from "./functions/fetchUserById";
 import fetchUserByEmail from "./functions/fetchUserByEmail";
 
 function App() {
+  const [user, setUser] = useState(false);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,6 +47,7 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setLoading(false);
       if (user) {
+        setUser(true);
         let userEmail;
         user.providerData.forEach((profile) => {
           userEmail = profile.email;
@@ -53,6 +55,7 @@ function App() {
         fetchData(userEmail);
         navigate(`/`);
       } else {
+        setUser(false);
         navigate(`/login`);
       }
     });
@@ -83,7 +86,7 @@ function App() {
   return (
     <>
       <UserContext.Provider value={userData}>
-        {userData && <Navbar />}
+        {user && userData && <Navbar />}
         <Routes>
           {userData && userData.role === "lecturer" && (
             <>
