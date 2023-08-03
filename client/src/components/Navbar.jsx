@@ -1,6 +1,11 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
+
+// Components
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import NavbarBS from "react-bootstrap/Navbar";
 
 // Contexts
 import UserContext from "../contexts/UserContext";
@@ -9,7 +14,8 @@ function Navbar() {
   const userData = useContext(UserContext);
   const auth = getAuth();
 
-  const handleSignOut = () => {
+  // Logging out
+  function handleLogOut() {
     signOut(auth)
       .then(() => {
         console.log("User signed out successfully.");
@@ -17,39 +23,55 @@ function Navbar() {
       .catch((error) => {
         console.error("Error signing out:", error);
       });
-  };
+  }
 
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/">Dashboard</Link>
-        </li>
-        {userData && userData.role === "student" && (
-          <li>
-            <Link to={`/student/${userData._id}`}>Attendance</Link>
-          </li>
-        )}
-        {userData && userData.role === "lecturer" && (
-          <>
-            <li>
-              <Link to="/module">Modules</Link>
-            </li>
-            <li>
-              <Link to="/event">Events</Link>
-            </li>
-            <li>
-              <Link to="/student">Students</Link>
-            </li>
-          </>
-        )}
-        {userData && (
-          <li>
-            <button onClick={handleSignOut}>Sign Out</button>
-          </li>
-        )}
-      </ul>
-    </nav>
+    <>
+      <NavbarBS expand="lg" className="bg-body-tertiary">
+        <Container>
+          <NavbarBS.Brand>OpenAMS</NavbarBS.Brand>
+          <NavbarBS.Toggle aria-controls="basic-navbar-nav" />
+          <NavbarBS.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              <NavLink to="/" className="nav-link">
+                Dashboard
+              </NavLink>
+              {userData && userData.role === "student" && (
+                <li>
+                  <NavLink to={`/student/${userData._id}`} className="nav-link">
+                    Attendance
+                  </NavLink>
+                </li>
+              )}
+              {userData && userData.role === "lecturer" && (
+                <>
+                  <NavLink to="/module" className="nav-link">
+                    Module
+                  </NavLink>
+                  <NavLink to="/event" className="nav-link">
+                    Event
+                  </NavLink>
+                  <NavLink to="/student" className="nav-link">
+                    Student
+                  </NavLink>
+                </>
+              )}
+            </Nav>
+            <Nav>
+              {userData && (
+                <NavLink
+                  onClick={handleLogOut}
+                  to="/logout"
+                  className="nav-link"
+                >
+                  Log out
+                </NavLink>
+              )}
+            </Nav>
+          </NavbarBS.Collapse>
+        </Container>
+      </NavbarBS>
+    </>
   );
 }
 
