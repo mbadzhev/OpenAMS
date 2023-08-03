@@ -6,8 +6,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 // Components
 import Navbar from "./components/Navbar";
 import NotFound from "./pages/NotFound";
-import StudentDashboard from "./pages/StudentDashboard";
-import LecturerDashboard from "./pages/LecturerDashboard";
+import Dashboard from "./pages/Dashboard";
 import StudentList from "./pages/StudentList";
 import StudentAttendance from "./pages/StudentAttendance";
 import EventList from "./pages/EventList";
@@ -32,12 +31,12 @@ function App() {
   const navigate = useNavigate();
 
   const firebaseConfig = {
-    apiKey: "AIzaSyCGGXwQo16S2qsVD8gxVuvkmZ2gvfYVy2k",
-    authDomain: "msc-project-a179a.firebaseapp.com",
-    projectId: "msc-project-a179a",
-    storageBucket: "msc-project-a179a.appspot.com",
-    messagingSenderId: "110772079314",
-    appId: "1:110772079314:web:a3e1ad530986aeb53cbb0b",
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.FIREBASE_APP_ID,
   };
 
   const app = initializeApp(firebaseConfig);
@@ -90,7 +89,7 @@ function App() {
         <Routes>
           {userData && userData.role === "lecturer" && (
             <>
-              <Route path="/" element={<LecturerDashboard />} />
+              <Route path="/" element={<Dashboard />} />
               <Route path="/module" element={<ModuleList />} />
               <Route path="/module/:moduleId" element={<ModuleAttendance />} />
               <Route path="/event" element={<EventList />} />
@@ -104,7 +103,7 @@ function App() {
           )}
           {userData && userData.role === "student" && (
             <>
-              <Route path="/" element={<StudentDashboard />} />
+              <Route path="/" element={<Dashboard />} />
               <Route
                 path="/student/:studentId"
                 element={<StudentAttendance />}
