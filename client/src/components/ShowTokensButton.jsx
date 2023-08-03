@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 
+// Components
+import Button from "react-bootstrap/Button";
+
 // Functions
 import fetchEvent from "../functions/fetchEvent";
+import formatDate from "../functions/formatDate";
 
-function ShowTokensButton({ eventId }) {
+function ShowTokensButton({ eventId, refetch }) {
   const [eventData, setEventData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -11,7 +15,7 @@ function ShowTokensButton({ eventId }) {
 
   useEffect(() => {
     fetchData(eventId);
-  }, [eventId]);
+  }, [eventId, refetch]);
 
   async function fetchData(eventId) {
     try {
@@ -41,21 +45,27 @@ function ShowTokensButton({ eventId }) {
 
   if (eventData) {
     if (!isOpen) {
-      return <button onClick={togglePopup}>Show Tokens</button>;
+      return (
+        <Button className="me-2" onClick={togglePopup}>
+          Show Tokens
+        </Button>
+      );
     } else {
       return (
         <>
           {eventData.tokens.map((token) => {
             const code = token.code;
-            const expire = token.expiredAt;
+            const expire = formatDate(token.expiredAt);
             return (
               <div key={token._id}>
-                <h4>Code: {code}</h4>
-                <h5>Expiration: {expire}</h5>
+                <h5>Code: {code}</h5>
+                <h6>Expiration: {expire}</h6>
               </div>
             );
           })}
-          <button onClick={togglePopup}>Hide Tokens</button>
+          <Button className="me-2" variant="secondary" onClick={togglePopup}>
+            Hide Tokens
+          </Button>
         </>
       );
     }
