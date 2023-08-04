@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
+// Components
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,22 +39,44 @@ function Login() {
 
   return (
     <>
-      {loading && <h1>Loading...</h1>}
-      {error && <h1>{`Error: ${error}`}</h1>}
+      {loading && <h1 className="pb-3 text-center">Loading...</h1>}
+      {error && <h1 className="pb-3 text-center">{`Error: ${error}`}</h1>}
       {!loading && !error && (
-        <>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={handleSignIn}>Sign In</button>
-        </>
+        <Container>
+          <Row className="my-lg-4">
+            <Col lg={4} xs={12}></Col>
+            <Col lg={4} xs={12} className="bg-component py-3 rounded">
+              <h1 className="pb-3 text-center">OpenAMS Login</h1>
+              <Form>
+                <div className="d-grid gap-2">
+                  <Form.Control
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter email"
+                  />
+
+                  <Form.Control
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    className="mb-4"
+                  />
+
+                  <Button
+                    variant="primary"
+                    onClick={handleSignIn}
+                    type="submit"
+                  >
+                    Log in
+                  </Button>
+                </div>
+              </Form>
+            </Col>
+            <Col lg={4} xs={12}></Col>
+          </Row>
+        </Container>
       )}
     </>
   );
