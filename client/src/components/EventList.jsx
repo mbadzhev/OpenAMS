@@ -1,3 +1,11 @@
+// Components
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+
+// Functions
+import formatDate from "../functions/formatDate";
+
 function EventList({ userData, selectedModule }) {
   function getModuleInfo(moduleId) {
     return userData.modules.find((module) => module._id === moduleId);
@@ -46,28 +54,42 @@ function EventList({ userData, selectedModule }) {
   const formattedEventData = getFormattedEventData();
 
   return (
-    <div>
-      <h2>Event List</h2>
-      <ul>
-        {formattedEventData.map((event) => (
-          <li key={event.eventId}>
-            <p>Date: {event.date}</p>
-            <p>Module Name: {event.moduleName}</p>
-            <p>Module Code: {event.moduleCode}</p>
-            <p>Event Type: {event.eventType}</p>
-            <p>Attendance Type: {event.attendanceType}</p>
-            <p>
-              Student Attendance:{" "}
-              {event.studentAttendance.length > 0
-                ? event.studentAttendance[0].present
-                  ? "Present"
-                  : "Absent"
-                : "Not available"}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      {formattedEventData.map((event) => (
+        <Row key={event.eventId}>
+          <Col md={10} xs={12}>
+            <h4>
+              {event.moduleName} ({event.moduleCode})
+            </h4>
+            <h6>
+              Event: {event.eventType} | Attendance: {event.attendanceType}
+              {event.eventType !== "online" &&
+                ` | Location: ${event.location}`}{" "}
+              | Time: {formatDate(event.date)}
+            </h6>
+          </Col>
+          <Col md={2} xs={12} className="md-text-end xs-text-start">
+            <div>
+              {event.studentAttendance.length > 0 ? (
+                event.studentAttendance[0].present ? (
+                  <Button variant="success" disabled>
+                    Present
+                  </Button>
+                ) : (
+                  <Button variant="danger" disabled>
+                    Absent
+                  </Button>
+                )
+              ) : (
+                <Button variant="secondary" disabled>
+                  Not available
+                </Button>
+              )}
+            </div>
+          </Col>
+        </Row>
+      ))}
+    </>
   );
 }
 
