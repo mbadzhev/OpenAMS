@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 
 // Components
 import EventList from "../components/EventList";
-import { Doughnut } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 
 // Functions
 import fetchUserById from "../functions/fetchUserById";
@@ -17,6 +21,7 @@ function StudentAttendance() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
+  const [selectedModuleCode, setSelectedModuleCode] = useState(null);
 
   useEffect(() => {
     if (studentId) {
@@ -57,8 +62,9 @@ function StudentAttendance() {
     }
   }
 
-  function handleModuleSelect(moduleId) {
+  function handleModuleSelect(moduleId, moduleCode) {
     setSelectedModule(moduleId);
+    setSelectedModuleCode(moduleCode);
   }
 
   if (loading) {
@@ -71,27 +77,51 @@ function StudentAttendance() {
   }
 
   return (
-    <>
-      <div>
-        <button onClick={() => handleModuleSelect(null)}>
-          Show All Modules
-        </button>
-        {studentData &&
-          studentData.modules.map((module) => (
-            <button
-              key={module._id}
-              onClick={() => handleModuleSelect(module._id)}
-            >
-              {module.code}
-            </button>
-          ))}
-      </div>
-
-      {studentData && (
-        <EventList userData={studentData} selectedModule={selectedModule} />
-      )}
-      {studentChartData && <Doughnut data={studentChartData} />}
-    </>
+    <Container className="my-3 bg-component py-3 rounded">
+      <Row>
+        <h1 className="pb-3 text-center">Student Attendance</h1>
+        <Col>
+          <Button variant="primary" onClick={() => handleModuleSelect(null)}>
+            All Modules
+          </Button>
+          {studentData &&
+            studentData.modules.map((module) => (
+              <Button
+                className="mx-2"
+                variant="primary"
+                key={module._id}
+                onClick={() => handleModuleSelect(module._id, module.code)}
+              >
+                {module.code}
+              </Button>
+            ))}
+        </Col>
+      </Row>
+      <Row>
+        <Col md={7} xs={12}>
+          <h2 className="my-3 text-center">Event List: {selectedModuleCode}</h2>
+          <div
+            style={{
+              maxHeight: "600px",
+              overflowY: "auto",
+            }}
+          >
+            {studentData && (
+              <EventList
+                userData={studentData}
+                selectedModule={selectedModule}
+              />
+            )}
+          </div>
+        </Col>
+        <Col md={5} xs={12}>
+          <h2 className="my-3 text-center">
+            Module Attendance: {selectedModuleCode}
+          </h2>
+          {studentChartData && <Pie data={studentChartData} />}
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
