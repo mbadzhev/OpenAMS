@@ -3,6 +3,11 @@ import { useParams } from "react-router-dom";
 
 // Components
 import AttendanceListItem from "../components/AttendanceListItem";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 // Functions
 import fetchEvent from "../functions/fetchEvent";
@@ -68,7 +73,7 @@ function EventAttendance() {
 
   // Helper function to generate the filter text
   const generateFilterText = () => {
-    let filterText = "Student List for ";
+    let filterText = "Student List: ";
     if (sortingOption === "present") {
       filterText += "Present Students";
     } else if (sortingOption === "absent") {
@@ -85,7 +90,6 @@ function EventAttendance() {
   // Function to swap attendance status for all shown students
   const handleSwapAttendanceStatus = () => {
     getSortedAttendance().forEach((item) => {
-      console.log(eventId, item.student._id, item.present);
       patchEventLecturerCheckin(eventId, item.student._id, item.present);
     });
   };
@@ -100,40 +104,58 @@ function EventAttendance() {
   }
 
   return (
-    <>
-      <div>
-        <input
-          type="text"
-          placeholder="Search by name or number"
-          value={searchQuery}
-          onChange={handleSearchInputChange}
-        />
-        <button onClick={() => handleSortingOptionChange("all")}>
-          Show All
-        </button>
-        <button onClick={() => handleSortingOptionChange("present")}>
-          Show Present
-        </button>
-        <button onClick={() => handleSortingOptionChange("absent")}>
-          Show Absent
-        </button>
-        <button onClick={handleSwapAttendanceStatus}>Swap Attendance</button>
-      </div>
-      <div>
-        <h2>{generateFilterText()}</h2>
-        <ul>
+    <Container className="my-md-3 bg-component py-3 rounded">
+      <Row className="mb-3">
+        <h1 className="pb-3 text-center">{generateFilterText()}</h1>
+        <Col lg={6} xs={12}>
+          <Form.Control
+            className="m-1"
+            type="text"
+            placeholder="Search by student name or number"
+            value={searchQuery}
+            onChange={handleSearchInputChange}
+          />
+        </Col>
+        <Col lg={6} xs={12}>
+          <Button
+            className="m-1"
+            variant="primary"
+            onClick={() => handleSortingOptionChange("all")}
+          >
+            Show All
+          </Button>
+          <Button
+            className="m-1"
+            variant="primary"
+            onClick={() => handleSortingOptionChange("present")}
+          >
+            Show Present
+          </Button>
+          <Button
+            className="m-1"
+            variant="primary"
+            onClick={() => handleSortingOptionChange("absent")}
+          >
+            Show Absent
+          </Button>
+          <Button variant="warning" onClick={handleSwapAttendanceStatus}>
+            Swap Attendance
+          </Button>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
           {getSortedAttendance().map((attendanceItem) => (
-            <li key={attendanceItem._id}>
-              <AttendanceListItem
-                eventId={eventId}
-                student={attendanceItem.student}
-                status={attendanceItem.present}
-              />
-            </li>
+            <AttendanceListItem
+              key={attendanceItem._id}
+              eventId={eventId}
+              student={attendanceItem.student}
+              status={attendanceItem.present}
+            />
           ))}
-        </ul>
-      </div>
-    </>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
