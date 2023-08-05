@@ -86,8 +86,8 @@ async function getModuleAttendanceData(moduleData) {
         {
           label: "Attendance Rate",
           data,
-          borderColor: "rgb(255, 99, 132)",
-          backgroundColor: "rgba(255, 99, 132, 0.5)",
+          borderColor: "rgba(54, 162, 235, 0.6)",
+          backgroundColor: "rgba(54, 162, 235, 0.6)",
         },
       ],
     };

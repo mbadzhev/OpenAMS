@@ -69,7 +69,7 @@ function Dashboard() {
 
   if (todayEvents.length === 0) {
     return (
-      <Container className="my-3 bg-component rounded">
+      <Container className="my-md-3 bg-component rounded">
         <Row>
           <Col>
             <h1 className="py-3 text-center">No events today.</h1>
@@ -79,7 +79,7 @@ function Dashboard() {
     );
   } else if (userData && userData.role === "lecturer") {
     return (
-      <Container className="my-3 bg-component rounded">
+      <Container className="my-md-3 bg-component rounded">
         <Row>
           <Col>
             <h1 className="py-3 text-center">Events Today</h1>
@@ -93,7 +93,7 @@ function Dashboard() {
     );
   } else if (userData && userData.role === "student") {
     return (
-      <Container className="my-3 bg-component rounded">
+      <Container className="my-md-3 bg-component rounded">
         <Row>
           <h1 className="py-3 text-center">Events Today</h1>
           <Col>
@@ -109,7 +109,7 @@ function Dashboard() {
     );
   } else {
     return (
-      <Container className="my-3 text-center">
+      <Container className="my-md-3 text-center">
         <Row>
           <h1>Something went wrong.</h1>
         </Row>
