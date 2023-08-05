@@ -29,11 +29,11 @@ function LecturerEventList({ todayEvents, modules }) {
 
     return (
       <Row className="mb-4" key={event._id}>
-        <Col md={6} xs={12}>
-          <h2>
+        <Col md={8} xs={12}>
+          <h3>
             {moduleName} ({moduleCode})
-          </h2>
-          <h4>
+          </h3>
+          <h5>
             Event: {event.eventType} | Attendance: {event.attendanceType}
             {event.eventType !== "online" && ` | Location: ${event.location}`} |
             Time:{" "}
@@ -41,12 +41,12 @@ function LecturerEventList({ todayEvents, modules }) {
               hour: "2-digit",
               minute: "2-digit",
             })}
-          </h4>
+          </h5>
         </Col>
-        <Col md={6} xs={12}>
+        <Col md={4} xs={12} className="text-end">
           {isEventInPast ? (
             <>
-              <h4>Token generation unavailable.</h4>
+              <h5>Token generation unavailable.</h5>
               <ShowTokensButton eventId={event._id} refetch={refetch} />
             </>
           ) : (

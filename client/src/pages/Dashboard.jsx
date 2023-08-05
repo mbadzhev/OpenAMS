@@ -93,25 +93,27 @@ function Dashboard() {
     );
   } else if (userData && userData.role === "student") {
     return (
-      <Container className="my-md-3 bg-component rounded">
+      <Container className="my-md-3 py-3 bg-component rounded">
         <Row>
           <h1 className="py-3 text-center">Events Today</h1>
-          <Col>
+          <Col md={7} xs={12}>
             <StudentEventList
               todayEvents={todayEvents}
               modules={userData.modules}
               userId={userData._id}
             />
           </Col>
-          <Col>{userChartData && <Pie data={userChartData} />}</Col>
+          <Col md={5} xs={12}>
+            {userChartData && <Pie data={userChartData} />}
+          </Col>
         </Row>
       </Container>
     );
   } else {
     return (
-      <Container className="my-md-3 text-center">
+      <Container className="my-md-3 py-3 bg-component rounded">
         <Row>
-          <h1>Something went wrong.</h1>
+          <h1 className="py-3 text-center">Something went wrong.</h1>
         </Row>
       </Container>
     );

@@ -79,7 +79,11 @@ function StudentAttendance() {
   return (
     <Container className="my-md-3 bg-component py-3 rounded">
       <Row>
-        <h1 className="pb-3 text-center">Student Attendance</h1>
+        {studentData && (
+          <h1 className="pb-3 text-center">
+            Student Attendance: {studentData.firstName} {studentData.lastName}
+          </h1>
+        )}
         <Col>
           <Button variant="primary" onClick={() => handleModuleSelect(null)}>
             All Modules
