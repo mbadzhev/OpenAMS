@@ -52,7 +52,13 @@ function App() {
           userEmail = profile.email;
         });
         fetchData(userEmail);
-        navigate(`/`);
+        // Check if the user has just logged in (not already logged in)
+        if (!sessionStorage.getItem("loggedIn")) {
+          // Mark the user as logged in
+          sessionStorage.setItem("loggedIn", "true");
+          // Redirect the user to the dashboard after login
+          navigate(`/`);
+        }
       } else {
         setUser(false);
         navigate(`/login`);
@@ -60,7 +66,7 @@ function App() {
     });
 
     return unsubscribe;
-  }, [auth]);
+  }, [auth, navigate]);
 
   async function fetchData(userEmail) {
     try {
