@@ -1,9 +1,14 @@
 import { useNavigate } from "react-router-dom";
 
+// Components
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+
 // Functions
 import formatDate from "../functions/formatDate";
 
-function EventListItem({ event, module }) {
+function EventListItem({ event, module, showModule }) {
   const navigate = useNavigate();
 
   function handleEventClick() {
@@ -11,18 +16,23 @@ function EventListItem({ event, module }) {
   }
 
   return (
-    <li key={event._id}>
-      {module && (
-        <p>
-          {module.name} ({module.code})
-        </p>
-      )}
-      <p>Date: {formatDate(event.date)}</p>
-      <p>Location: {event.location}</p>
-      <p>Event Type: {event.eventType}</p>
-      <p>Attendance Type: {event.attendanceType}</p>
-      <button onClick={handleEventClick}>View Details</button>
-    </li>
+    <Row className="mb-4" key={event._id}>
+      <Col md={9} xs={12}>
+        {showModule && (
+          <h4>
+            {module.name} ({module.code})
+          </h4>
+        )}
+        <h6>
+          Time: {formatDate(event.date)} | Attendance: {event.attendanceType}
+          {event.eventType !== "online" && ` | Location: ${event.location}`} |
+          Event: {event.eventType}
+        </h6>
+      </Col>
+      <Col md={3} xs={12} className="d-md-flex justify-content-md-end">
+        <Button onClick={handleEventClick}>View Details</Button>
+      </Col>
+    </Row>
   );
 }
 

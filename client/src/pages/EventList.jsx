@@ -3,6 +3,10 @@ import UserContext from "../contexts/UserContext";
 
 // Components
 import EventListItem from "../components/EventListItem";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 
 function EventList() {
   const userData = useContext(UserContext);
@@ -34,41 +38,67 @@ function EventList() {
   }
 
   return (
-    <>
-      {userData && userData.modules && userData.modules.length > 0 && (
-        <div>
-          <button onClick={handleSelectAllModules}>All Modules</button>
-          {userData.modules.map((module) => (
-            <button key={module._id} onClick={() => handleModuleClick(module)}>
-              {module.name}
-            </button>
-          ))}
-        </div>
-      )}
-      {filteredEvents.length === 0 && (
-        <p>No events available for the selected module.</p>
-      )}
-      {filteredEvents.length > 0 && (
-        <div>
-          <h2>
-            Selected Module:{" "}
-            {selectedModule === "All" ? "All Modules" : selectedModule.name}
-          </h2>
-          <ul>
-            {filteredEvents.map((event) => {
-              // Find the corresponding module for the event
-              const module = userData.modules.find(
-                (module) => module._id === event.module
-              );
+    <Container className="my-md-3 py-3 bg-component rounded">
+      <Row className="mb-2">
+        {filteredEvents.length > 0 && (
+          <>
+            <h1 className="pb-3 text-center">
+              Event List:{" "}
+              {selectedModule === "All" ? "All Modules" : selectedModule.code}
+            </h1>
+          </>
+        )}
+        <Col>
+          {userData && userData.modules && userData.modules.length > 0 && (
+            <>
+              <Button
+                className="mx-2"
+                variant="primary"
+                onClick={handleSelectAllModules}
+              >
+                All Modules
+              </Button>
+              {userData.modules.map((module) => (
+                <Button
+                  className="mx-2"
+                  variant="primary"
+                  key={module._id}
+                  onClick={() => handleModuleClick(module)}
+                >
+                  {module.code}
+                </Button>
+              ))}
+            </>
+          )}
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          {filteredEvents.length === 0 && (
+            <h2>No events available for the selected module.</h2>
+          )}
+          {filteredEvents.length > 0 && (
+            <>
+              {filteredEvents.map((event) => {
+                // Find the corresponding module for the event
+                const module = userData.modules.find(
+                  (module) => module._id === event.module
+                );
 
-              return (
-                <EventListItem key={event._id} event={event} module={module} />
-              );
-            })}
-          </ul>
-        </div>
-      )}
-    </>
+                return (
+                  <EventListItem
+                    key={event._id}
+                    event={event}
+                    module={module}
+                    showModule={true}
+                  />
+                );
+              })}
+            </>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

@@ -18,6 +18,8 @@ function Navbar() {
   function handleLogOut() {
     signOut(auth)
       .then(() => {
+        // Remove the "loggedIn" flag from sessionStorage
+        sessionStorage.removeItem("loggedIn");
         console.log("User signed out successfully.");
       })
       .catch((error) => {

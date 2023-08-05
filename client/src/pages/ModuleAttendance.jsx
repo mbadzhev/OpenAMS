@@ -16,6 +16,9 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { Line } from "react-chartjs-2";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 ChartJS.register(
   CategoryScale,
@@ -104,25 +107,58 @@ function ModuleAttendance() {
 
   return (
     <>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      {moduleData && (
-        <ul>
-          {moduleData.events.map((event) => (
-            <EventListItem key={event._id} event={event} module={moduleData} />
-          ))}
-        </ul>
-      )}
-      {moduleChartData && (
-        <>
-          <Bar options={barChartOptions} data={moduleChartData.barChartData} />
-          <Line
-            options={lineChartOptions}
-            data={moduleChartData.lineChartData}
-          />
-        </>
-      )}
-      ;
+      <Container className="my-md-3 py-3 bg-component rounded">
+        <Row>
+          <Col>
+            {loading && <h1 className="text-center">Loading...</h1>}
+            {error && <h1 className="text-center">Error: {error}</h1>}
+            {moduleData && (
+              <h1 className="text-center">Module Data: {moduleData.code}</h1>
+            )}
+          </Col>
+        </Row>
+        <Row className="mb-5">
+          <Col md={6} xs={12}>
+            <h2 className="py-3 text-center">Event List</h2>
+            <div
+              style={{
+                maxHeight: "500px",
+                overflowY: "auto",
+              }}
+            >
+              {moduleData &&
+                moduleData.events.map((event) => (
+                  <EventListItem
+                    key={event._id}
+                    event={event}
+                    module={moduleData}
+                    showModule={false}
+                  />
+                ))}
+            </div>
+          </Col>
+          <Col md={6} xs={12}>
+            <h2 className="py-3 text-center">Overall Attendance Rates</h2>
+            {moduleChartData && (
+              <Bar
+                options={barChartOptions}
+                data={moduleChartData.barChartData}
+              />
+            )}
+          </Col>
+        </Row>
+        <Row className="pb-4">
+          <Col>
+            <h2 className="py-3 text-center">Event Attendance Rates</h2>
+            {moduleChartData && (
+              <Line
+                options={lineChartOptions}
+                data={moduleChartData.lineChartData}
+              />
+            )}
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 }

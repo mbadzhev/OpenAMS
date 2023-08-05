@@ -2,6 +2,11 @@ import { useState, useEffect, useContext } from "react";
 
 // Components
 import StudentListItem from "../components/StudentListItem";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 // Functions
 import fetchModule from "../functions/fetchModule";
@@ -115,37 +120,48 @@ function StudentList() {
   }
 
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Search by name or student number"
-        value={searchQuery}
-        onChange={handleSearchQueryChange}
-      />
-      <div>
-        <button onClick={() => handleModuleSelect(null)}>
-          Show All Modules
-        </button>
-        {userData &&
-          userData.modules.map((module) => (
-            <button
-              key={module._id}
-              onClick={() => handleModuleSelect(module._id)}
-            >
-              {module.code}
-            </button>
-          ))}
-      </div>
-      <h2>Student List for {searchFilterText}</h2>
+    <Container className="my-md-3 py-3 bg-component rounded">
+      <Row className="mb-3">
+        <h1 className="pb-3 text-center">Student List: {searchFilterText}</h1>
+        <Col>
+          <Form.Control
+            className="m-1"
+            type="text"
+            placeholder="Search by student name or number"
+            value={searchQuery}
+            onChange={handleSearchQueryChange}
+          />
+        </Col>
+        <Col>
+          <Button
+            className="m-1"
+            variant="primary"
+            onClick={() => handleModuleSelect(null)}
+          >
+            All Modules
+          </Button>
+          {userData &&
+            userData.modules.map((module) => (
+              <Button
+                className="m-1"
+                variant="primary"
+                key={module._id}
+                onClick={() => handleModuleSelect(module._id)}
+              >
+                {module.code}
+              </Button>
+            ))}
+        </Col>
+      </Row>
 
       {filteredStudents.length === 0 ? (
-        <p>No matching students found.</p>
+        <h4>No matching students found.</h4>
       ) : (
         filteredStudents.map((student) => (
           <StudentListItem key={student._id} student={student} />
         ))
       )}
-    </div>
+    </Container>
   );
 }
 

@@ -21,11 +21,11 @@ function StudentEventList({ todayEvents, modules, userId }) {
 
     return (
       <Row className="mb-4" key={event._id}>
-        <Col md={6} xs={12}>
-          <h2>
+        <Col md={8} xs={12}>
+          <h3>
             {moduleName} ({moduleCode})
-          </h2>
-          <h4>
+          </h3>
+          <h5>
             Event: {event.eventType} | Attendance: {event.attendanceType}
             {event.eventType !== "online" && ` | Location: ${event.location}`} |
             Time:{" "}
@@ -33,13 +33,13 @@ function StudentEventList({ todayEvents, modules, userId }) {
               hour: "2-digit",
               minute: "2-digit",
             })}
-          </h4>
+          </h5>
         </Col>
-        <Col md={6} xs={12}>
+        <Col md={4} xs={12}>
           {isEventInPast && !status ? (
-            <h2>Absent</h2>
+            <h3>Absent</h3>
           ) : status ? (
-            <h2>Present</h2>
+            <h3>Present</h3>
           ) : (
             <CheckinButton eventId={event._id} userId={userId} />
           )}
